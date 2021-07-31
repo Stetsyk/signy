@@ -55,16 +55,16 @@ func initConfig() error {
 }
 
 func createTables(db *gorm.DB) {
-	if db.Migrator().HasTable(&signy.User{}) {
-		db.Exec("DROP TABLE users")
-	}
-	db.AutoMigrate(&signy.User{})
-	if db.Migrator().HasTable(&signy.Document{}) {
-		db.Exec("DROP TABLE documents")
-	}
-	db.AutoMigrate(&signy.Document{})
-	if (db.Migrator().HasTable(&signy.Signature{})) {
-		db.Exec("DROP TABLE signatures")
-	}
-	db.AutoMigrate(&signy.Signature{})
+	// if db.Migrator().HasTable(&signy.User{}) {
+	// 	db.Exec("DROP TABLE users")
+	// }
+	// db.AutoMigrate(&signy.User{})
+	// if db.Migrator().HasTable(&signy.Document{}) {
+	// 	db.Exec("DROP TABLE documents")
+	// }
+	// db.AutoMigrate(&signy.Document{})
+	// if (db.Migrator().HasTable(&signy.Signature{})) {
+	// 	db.Exec("DROP TABLE signatures")
+	// }
+	// db.AutoMigrate(&signy.Signature{})
 }

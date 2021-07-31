@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/Stetsyk/signy"
 	"gorm.io/gorm"
 )
@@ -22,12 +20,19 @@ func NewAuthMysql(db *gorm.DB) *AuthMysql {
 }
 
 func (r *AuthMysql) CreateUser(user signy.User) (int, error) {
-	if r.db == nil {
-		fmt.Println("oleksii lol")
-	}
 	result := r.db.Create(&user)
 	if result.Error != nil {
 		return 0, result.Error
 	}
 	return user.Id, nil
+}
+func (r *AuthMysql) GetUser(username, password string) (signy.User, error) {
+	var user signy.User
+	user.Username = username
+	user.Password = password
+	result := r.db.First(&user)
+	if result.Error != nil {
+		return signy.User{}, result.Error
+	}
+	return user, nil
 }

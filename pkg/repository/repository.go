@@ -7,6 +7,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user signy.User) (int, error)
+	GetUser(username, password string) (signy.User, error)
 }
 
 type Document interface {
