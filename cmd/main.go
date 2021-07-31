@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Stetsyk/signy"
 	"github.com/Stetsyk/signy/pkg/handler"
 	"github.com/Stetsyk/signy/pkg/repository"
 	"github.com/Stetsyk/signy/pkg/service"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -16,12 +18,17 @@ func main() {
 	if err := initConfig(); err != nil {
 		log.Fatalf("error initializing config: %s", err.Error())
 	}
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error loading env variables %s", err.Error())
+	}
+
 	db, err := repository.NewMysqlDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
-		Password: viper.GetString("db.password"),
 		DBName:   viper.GetString("db.dbname"),
+		Password: os.Getenv("DB_PASSWORD"),
 	})
 
 	if err != nil {
