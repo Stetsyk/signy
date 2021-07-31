@@ -1,7 +1,7 @@
 package signy
 
 type User struct {
-	Id       int    `json:"-" db:"id"`
+	Id       int    `gorm:"primaryKey"`
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }

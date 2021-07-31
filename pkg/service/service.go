@@ -1,8 +1,12 @@
 package service
 
-import "github.com/Stetsyk/signy/pkg/repository"
+import (
+	"github.com/Stetsyk/signy"
+	"github.com/Stetsyk/signy/pkg/repository"
+)
 
 type Authorization interface {
+	CreateUser(user signy.User) (int, error)
 }
 
 type Document interface {
@@ -13,6 +17,8 @@ type Service struct {
 	Document
 }
 
-func NewService(repost *repository.Repository) *Service {
-	return &Service{}
+func NewService(repos *repository.Repository) *Service {
+	return &Service{
+		Authorization: NewAuthService(repos.Authorization),
+	}
 }

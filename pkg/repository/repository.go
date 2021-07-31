@@ -1,8 +1,12 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"github.com/Stetsyk/signy"
+	"gorm.io/gorm"
+)
 
 type Authorization interface {
+	CreateUser(user signy.User) (int, error)
 }
 
 type Document interface {
@@ -14,5 +18,7 @@ type Repository struct {
 }
 
 func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		Authorization: NewAuthMysql(db),
+	}
 }
