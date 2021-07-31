@@ -9,10 +9,8 @@ import (
 	"github.com/Stetsyk/signy/pkg/service"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
-
-// "fmt"
-// "github.com/gin-gonic/gin"
 
 func main() {
 	if err := initConfig(); err != nil {
@@ -30,6 +28,8 @@ func main() {
 		log.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
+	createTables(db)
+
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
@@ -45,4 +45,19 @@ func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
+}
+
+func createTables(db *gorm.DB) {
+	if db.Migrator().HasTable(&signy.User{}) {
+		db.Exec("DROP TABLE users")
+	}
+	db.AutoMigrate(&signy.User{})
+	if db.Migrator().HasTable(&signy.Document{}) {
+		db.Exec("DROP TABLE documents")
+	}
+	db.AutoMigrate(&signy.Document{})
+	if (db.Migrator().HasTable(&signy.Signature{})) {
+		db.Exec("DROP TABLE signatures")
+	}
+	db.AutoMigrate(&signy.Signature{})
 }
