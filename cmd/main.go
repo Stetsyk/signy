@@ -17,11 +17,11 @@ func main() {
 		log.Fatalf("error initializing config: %s", err.Error())
 	}
 	db, err := repository.NewMysqlDB(repository.Config{
-		Host:     "localhost",
-		Port:     "3306",
-		Username: "root",
-		Password: "1111",
-		DBName:   "documents",
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		Password: viper.GetString("db.password"),
+		DBName:   viper.GetString("db.dbname"),
 	})
 
 	if err != nil {
