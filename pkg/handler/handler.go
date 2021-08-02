@@ -22,12 +22,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.singIn)
 	}
 
-	api := router.Group("/api")
+	api := router.Group("/api", h.userIdentity)
 	{
-		auth.GET("/show-all-users", h.showAllUsers)
-		auth.GET("/show-all-documents", h.showAllDocuments)
-		auth.GET("/show-my-documents", h.showMyDocuments)
-		auth.POST("/add-document", h.addDocument)
+		api.GET("/show-all-users", h.showAllUsers)
+		api.GET("/show-all-documents", h.showAllDocuments)
+		api.GET("/show-my-documents", h.showMyDocuments)
+		api.POST("/add-document", h.addDocument)
 
 		document := api.Group("document/:id/")
 		{

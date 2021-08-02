@@ -28,9 +28,7 @@ func (r *AuthMysql) CreateUser(user signy.User) (int, error) {
 }
 func (r *AuthMysql) GetUser(username, password string) (signy.User, error) {
 	var user signy.User
-	user.Username = username
-	user.Password = password
-	result := r.db.First(&user)
+	result := r.db.Where("username = ? AND password = ?", username, password).First(&user)
 	if result.Error != nil {
 		return signy.User{}, result.Error
 	}
