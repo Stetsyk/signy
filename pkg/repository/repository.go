@@ -11,6 +11,7 @@ type Authorization interface {
 }
 
 type Document interface {
+	GetAll(userId int) ([]signy.Document, error)
 }
 
 type Repository struct {
@@ -21,5 +22,6 @@ type Repository struct {
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthMysql(db),
+		Document:      NewDocumentMysql(db),
 	}
 }

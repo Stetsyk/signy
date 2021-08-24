@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/Stetsyk/signy"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,8 +11,25 @@ func (h *Handler) showAllUsers(c *gin.Context) {
 
 }
 
-func (h *Handler) showAllDocuments(c *gin.Context) {
+type getAllDocumentsResponse struct {
+	Documents []signy.Document `json:"documents"`
+}
 
+func (h *Handler) showAllDocuments(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	documents, err := h.services.Document.GetAll(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getAllDocumentsResponse{
+		Documents: documents,
+	})
 }
 
 func (h *Handler) showMyDocuments(c *gin.Context) {

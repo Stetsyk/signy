@@ -28,7 +28,7 @@ type signInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (h *Handler) singIn(c *gin.Context) {
+func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
 	err := c.BindJSON(&input)
 	if err != nil {
