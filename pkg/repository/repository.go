@@ -11,7 +11,7 @@ type Authorization interface {
 }
 
 type Document interface {
-	GetAll(userId int) ([]signy.Document, error)
+	GetOwn(userId int) ([]signy.Document, error)
 }
 
 type Repository struct {

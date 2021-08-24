@@ -13,7 +13,7 @@ func NewDocumentMysql(db *gorm.DB) *DocumentMysql {
 	return &DocumentMysql{db: db}
 }
 
-func (r *DocumentMysql) GetAll(userId int) ([]signy.Document, error) {
+func (r *DocumentMysql) GetOwn(userId int) ([]signy.Document, error) {
 	var documents []signy.Document
 	result := r.db.Where("owner_id = ?", userId).Find(&documents)
 	if result.Error != nil {

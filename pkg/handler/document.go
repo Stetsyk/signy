@@ -11,28 +11,28 @@ func (h *Handler) showAllUsers(c *gin.Context) {
 
 }
 
-type getAllDocumentsResponse struct {
+type getOwnDocumentsResponse struct {
 	Documents []signy.Document `json:"documents"`
 }
 
-func (h *Handler) showAllDocuments(c *gin.Context) {
+func (h *Handler) showOwnedDocuments(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	documents, err := h.services.Document.GetAll(userId)
+	documents, err := h.services.Document.GetOwn(userId)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllDocumentsResponse{
+	c.JSON(http.StatusOK, getOwnDocumentsResponse{
 		Documents: documents,
 	})
 }
 
-func (h *Handler) showMyDocuments(c *gin.Context) {
+func (h *Handler) showNeedToSignDocuments(c *gin.Context) {
 
 }
 

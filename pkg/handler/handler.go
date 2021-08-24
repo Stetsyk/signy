@@ -25,8 +25,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	api := router.Group("/api", h.userIdentity)
 	{
 		api.GET("/show-all-users", h.showAllUsers)
-		api.GET("/show-all-documents", h.showAllDocuments)
-		api.GET("/show-my-documents", h.showMyDocuments)
+		api.GET("/show-owned-documents", h.showOwnedDocuments)
+		api.GET("/show-need-to-sign", h.showNeedToSignDocuments)
 		api.POST("/add-document", h.addDocument)
 
 		document := api.Group("document/:id/")

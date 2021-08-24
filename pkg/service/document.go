@@ -13,8 +13,8 @@ func NewDocumentService(repo repository.Document) *DocumentService {
 	return &DocumentService{repo: repo}
 }
 
-func (d *DocumentService) GetAll(userId int) ([]signy.Document, error) {
-	documents, err := d.repo.GetAll(userId)
+func (d *DocumentService) GetOwn(userId int) ([]signy.Document, error) {
+	documents, err := d.repo.GetOwn(userId)
 	if err != nil {
 		return documents, err
 	}
