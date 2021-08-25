@@ -13,6 +13,9 @@ type Authorization interface {
 
 type Document interface {
 	GetOwn(userId int) ([]signy.Document, error)
+	GetNeedToSign(userId int) ([]signy.Signature, error)
+	AddDocument(document signy.Document, userNeedToSign []int) error
+	GetStatus(userId int, documentId int) (string, error)
 }
 
 type Service struct {

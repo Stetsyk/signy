@@ -31,7 +31,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		document := api.Group("document/:id/")
 		{
-			document.GET("/users-need-to-sign", h.userNeedToSign)
+			document.POST("/sign-document", h.signDocument)
 			document.GET("/status", h.documentStatus)
 		}
 	}

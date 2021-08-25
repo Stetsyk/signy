@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Stetsyk/signy"
 	"github.com/gin-gonic/gin"
@@ -11,8 +12,12 @@ func (h *Handler) showAllUsers(c *gin.Context) {
 
 }
 
-type getOwnDocumentsResponse struct {
+type getOwnedDocumentsResponse struct {
 	Documents []signy.Document `json:"documents"`
+}
+
+type getNeedToSignResponse struct {
+	Signatures []signy.Signature `json:"signatures"`
 }
 
 func (h *Handler) showOwnedDocuments(c *gin.Context) {
@@ -27,26 +32,86 @@ func (h *Handler) showOwnedDocuments(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getOwnDocumentsResponse{
-		Documents: documents,
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"Documents": documents,
 	})
 }
 
 func (h *Handler) showNeedToSignDocuments(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	signatures, err := h.services.Document.GetNeedToSign(userId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-}
-
-func (h *Handler) addDocument(c *gin.Context) {
-	id, _ := c.Get(userCtx)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
+		"Signatures": signatures,
 	})
 }
 
-func (h *Handler) userNeedToSign(c *gin.Context) {
+const (
+	UsersNeedToSignCtx = "UsersNeedToSign"
+)
 
+type AddDocumentDTO struct {
+	Document        signy.Document `json:"Document"`
+	UsersNeedToSign []int          `json:"UsersNeedToSign"`
+}
+
+func (h *Handler) addDocument(c *gin.Context) {
+	_, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var addDocument AddDocumentDTO
+	if err := c.BindJSON(&addDocument); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	document := addDocument.Document
+	usersNeedToSign := addDocument.UsersNeedToSign
+
+	err = h.services.Document.AddDocument(document, usersNeedToSign)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"users":    usersNeedToSign,
+		"document": document,
+	})
+}
+
+func (h *Handler) signDocument(c *gin.Context) {
+	// id := c.Param("id")
 }
 
 func (h *Handler) documentStatus(c *gin.Context) {
-
+	documentId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	status, err := h.services.Document.GetStatus(userId, documentId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"Status": status,
+	})
 }
