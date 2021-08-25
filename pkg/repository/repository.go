@@ -15,6 +15,7 @@ type Document interface {
 	GetNeedToSign(userId int) ([]signy.Signature, error)
 	AddDocument(document signy.Document, userNeedToSign []int) error
 	GetStatus(userId int, documentId int) (string, error)
+	SignDocument(userId int, documentId int, signature string) (string, error)
 }
 
 type Repository struct {

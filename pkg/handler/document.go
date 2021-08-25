@@ -91,8 +91,36 @@ func (h *Handler) addDocument(c *gin.Context) {
 	})
 }
 
+type SignDocumentDTO struct {
+	Signature string `json:"Signature"`
+}
+
 func (h *Handler) signDocument(c *gin.Context) {
-	// id := c.Param("id")
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	documentId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	var signDocumentDTO SignDocumentDTO
+	if err := c.BindJSON(&signDocumentDTO); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	signature := signDocumentDTO.Signature
+	status, err := h.services.Document.SignDocument(userId, documentId, signature)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"DocumentId": documentId,
+		"Status":     status,
+	})
 }
 
 func (h *Handler) documentStatus(c *gin.Context) {

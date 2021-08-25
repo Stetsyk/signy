@@ -12,6 +12,15 @@ type DocumentService struct {
 func NewDocumentService(repo repository.Document) *DocumentService {
 	return &DocumentService{repo: repo}
 }
+
+func (d *DocumentService) SignDocument(userId int, documentId int, signature string) (string, error) {
+	status, err := d.repo.SignDocument(userId, documentId, signature)
+	if err != nil {
+		return status, err
+	}
+	return status, nil
+}
+
 func (d *DocumentService) GetStatus(userId int, documentId int) (string, error) {
 	status, err := d.repo.GetStatus(userId, documentId)
 	if err != nil {

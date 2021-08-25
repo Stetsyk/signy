@@ -15,6 +15,17 @@ func NewDocumentMysql(db *gorm.DB) *DocumentMysql {
 	return &DocumentMysql{db: db}
 }
 
+func (r *DocumentMysql) SignDocument(userId int, documentId int, signature string) (string, error) {
+	// signature should be equal "approved" or "rejected"
+	r.db.Model(&signy.Signature{}).Where("user_id = ? AND document_id = ?", userId, documentId).Update("status", signature)
+	status, err := r.GetStatus(userId, documentId)
+	if err != nil {
+		return status, err
+	}
+	r.db.Model(&signy.Document{}).Where("id = ?", documentId).Update("status", status)
+	return status, nil
+}
+
 func (r *DocumentMysql) GetStatus(userId int, documentId int) (string, error) {
 	var status string
 	var document signy.Document
