@@ -19,7 +19,7 @@ const (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id`
+	UserId int `json:"user_id"`
 }
 
 type AuthService struct {
@@ -31,6 +31,13 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (s *AuthService) CreateUser(user signy.User) (int, error) {
+	exist, err := s.repo.UsernameExist(user.Username)
+	if err != nil {
+		return 0, err
+	}
+	if exist == true {
+		return 0, errors.New("User with such username already exist")
+	}
 	user.Password = s.generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }

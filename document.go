@@ -4,7 +4,7 @@ type Document struct {
 	Id      uint   `gorm:"primaryKey"`
 	Title   string `json:"title"`
 	Status  string `json:"status"` // "open", "in_review", "rejected", "approved"
-	OwnerId int    `json:"ownerId"`
+	OwnerId int    `json:"owner_id"`
 }
 
 type Signature struct {

@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) showAllUsers(c *gin.Context) {
-
-}
-
 type getOwnedDocumentsResponse struct {
 	Documents []signy.Document `json:"documents"`
 }

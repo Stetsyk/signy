@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/Stetsyk/signy"
 	"github.com/Stetsyk/signy/pkg/handler"
@@ -43,9 +46,23 @@ func main() {
 
 	// handlers := new(handler.Handler)
 	srv := new(signy.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error occured while running http server: %s", err.Error())
+	go func() {
+		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+			logrus.Fatalf("error occured while running http server: %s", err.Error())
+		}
+	}()
+
+	logrus.Print("Signy App Started")
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	logrus.Print("TodoApp Shutting Down")
+
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Errorf("error occured on server shutting down: %s", err.Error())
 	}
+
 }
 
 func initConfig() error {
@@ -55,16 +72,16 @@ func initConfig() error {
 }
 
 func createTables(db *gorm.DB) {
-	// if db.Migrator().HasTable(&signy.User{}) {
-	// 	db.Exec("DROP TABLE users")
-	// }
-	// db.AutoMigrate(&signy.User{})
-	// if db.Migrator().HasTable(&signy.Document{}) {
-	// 	db.Exec("DROP TABLE documents")
-	// }
-	// db.AutoMigrate(&signy.Document{})
-	// if (db.Migrator().HasTable(&signy.Signature{})) {
-	// 	db.Exec("DROP TABLE signatures")
-	// }
-	// db.AutoMigrate(&signy.Signature{})
+	if db.Migrator().HasTable(&signy.User{}) {
+		db.Exec("DROP TABLE users")
+	}
+	db.AutoMigrate(&signy.User{})
+	if db.Migrator().HasTable(&signy.Document{}) {
+		db.Exec("DROP TABLE documents")
+	}
+	db.AutoMigrate(&signy.Document{})
+	if (db.Migrator().HasTable(&signy.Signature{})) {
+		db.Exec("DROP TABLE signatures")
+	}
+	db.AutoMigrate(&signy.Signature{})
 }

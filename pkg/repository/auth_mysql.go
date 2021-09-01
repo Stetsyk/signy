@@ -26,6 +26,20 @@ func (r *AuthMysql) CreateUser(user signy.User) (int, error) {
 	}
 	return user.Id, nil
 }
+
+func (r *AuthMysql) UsernameExist(username string) (bool, error) {
+	var user signy.User
+	result := r.db.Where("username = ?", username).First(&user)
+	if result.Error != nil && result.Error.Error() != "record not found" {
+		return false, result.Error
+	}
+	usernameExist := false
+	if result.RowsAffected > 0 {
+		usernameExist = true
+	}
+	return usernameExist, nil
+}
+
 func (r *AuthMysql) GetUser(username, password string) (signy.User, error) {
 	var user signy.User
 	result := r.db.Where("username = ? AND password = ?", username, password).First(&user)
